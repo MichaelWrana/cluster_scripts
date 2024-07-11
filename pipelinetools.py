@@ -178,8 +178,8 @@ Output:
     new_trace: the same trace with only positive-valued packets
 '''
 def _process_trace_positive(trace):
-    new_trace = np.zeros(len(trace))
-    last_positive = np.float64(0.0)
+    new_trace = np.zeros(len(trace), dtype=np.float16)
+    last_positive = np.float16(0.0)
     for i in range(len(trace)):
         if trace[i] >= 0.0:
             last_positive = trace[i]
@@ -196,8 +196,8 @@ Output:
     new_trace: the same trace with only negative-valued packets
 '''
 def _process_trace_negative(trace):
-    new_trace = np.zeros(len(trace))
-    last_negative = np.float64(0.0)
+    new_trace = np.zeros(len(trace), dtype=np.float16)
+    last_negative = np.float16(0.0)
     for i in range(len(trace)):
         if trace[i] <= 0.0:
             last_positive = trace[i]
