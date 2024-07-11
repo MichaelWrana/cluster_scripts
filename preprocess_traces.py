@@ -7,9 +7,9 @@ with open(train_loc, 'rb') as f:
     traces_train = pickle.load(f)
 
 print("Processing Traces (train)")
-train_pos = process_traces(traces_train, "p")
-with open(train_loc + '_pos', 'wb') as f:
-    pickle.dump(train_pos, f)
+# train_pos = process_traces(traces_train, "p")
+# with open(train_loc + '_pos', 'wb') as f:
+#     pickle.dump(train_pos, f)
 
 train_neg = process_traces(traces_train, "n")
 with open(train_loc + '_neg', 'wb') as f:
