@@ -33,7 +33,7 @@ def get_parameter_list(filenames_pos, filenames_neg, shapelets_pos, shapelets_ne
             X_pos,
             y,
             shapelets_pos[i],
-            "stumpy"
+            "cbd"
         ]
         parameter_list.append(parameter_set)
     
@@ -43,7 +43,7 @@ def get_parameter_list(filenames_pos, filenames_neg, shapelets_pos, shapelets_ne
             X_neg,
             y,
             shapelets_neg[i],
-            "stumpy"
+            "cbd"
         ]
         parameter_list.append(parameter_set)
     
