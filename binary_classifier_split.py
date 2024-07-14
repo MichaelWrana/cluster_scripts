@@ -115,5 +115,5 @@ if __name__ == "__main__":
 
     print([param[0] for param in param_list])
 
-    with Pool(num_cpus // 4) as p:
+    with Pool(num_cpus) as p:
         p.map(compute_shapelet_distances_mp, param_list)
