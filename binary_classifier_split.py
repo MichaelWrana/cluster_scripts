@@ -113,7 +113,5 @@ if __name__ == "__main__":
     print("CPUs Available: " + str(num_cpus))
     print("Tasks to Complete: " + str(len(param_list)))
 
-    print([param[0] for param in param_list])
-
     with Pool(num_cpus) as p:
         p.map(compute_shapelet_distances_mp, param_list)
