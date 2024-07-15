@@ -9,7 +9,7 @@ from multiprocessing import Pool
 import multiprocessing
 
 DIST_FUNC = 'cbd'
-FOLDER = ''
+FOLDER = '../'
 TRACE_FNAMES = [FOLDER + fname for fname in ['merged_train_pos', 'merged_train_neg', 'merged_test_pos', 'merged_test_neg']]
 SHAPELET_FNAME = FOLDER + 'shapelets'
 
@@ -108,9 +108,11 @@ if __name__ == "__main__":
     param_list = []
 
     num_cpus = multiprocessing.cpu_count()
+    num_chunks = multiprocessing.cpu_count() / 4
+    print("CPUs Available: " + str(num_cpus))
+    print("Chunks: " + str(num_chunks))
 
     param_list = chunk_traces(X_train_pos, X_train_neg, y_train, num_cpus) + chunk_traces(X_test_pos, X_test_neg, y_test, num_cpus)
-    print("CPUs Available: " + str(num_cpus))
     print("Tasks to Complete: " + str(len(param_list)))
 
     with Pool(num_cpus) as p:
