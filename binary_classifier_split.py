@@ -76,6 +76,7 @@ def load_data():
 def chunk_traces(X_pos, X_neg, y, num_chunks):
     param_list = []
     k, m = divmod(len(X_pos), num_chunks)
+    print("Approx Chunk Length: " + str(k))
     for i in range(num_chunks):
         idx = slice(i*k+min(i,m), (i+1)*k+min(i+1,m))
         fnames_pos, fnames_neg = generate_names(set_type="train", tabs='3', index = idx.start)
@@ -108,11 +109,11 @@ if __name__ == "__main__":
     param_list = []
 
     num_cpus = multiprocessing.cpu_count()
-    num_chunks = multiprocessing.cpu_count() / 4
+    num_chunks = multiprocessing.cpu_count() // 4
     print("CPUs Available: " + str(num_cpus))
     print("Chunks: " + str(num_chunks))
 
-    param_list = chunk_traces(X_train_pos, X_train_neg, y_train, num_cpus) + chunk_traces(X_test_pos, X_test_neg, y_test, num_cpus)
+    param_list = chunk_traces(X_train_pos, X_train_neg, y_train, num_chunks) + chunk_traces(X_test_pos, X_test_neg, y_test, num_chunks)
     print("Tasks to Complete: " + str(len(param_list)))
 
     with Pool(num_cpus) as p:
