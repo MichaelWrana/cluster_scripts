@@ -8,8 +8,9 @@ from pipelinetools import *
 from multiprocessing import Pool
 import multiprocessing
 
-DIST_FUNC = 'cbd'
-FOLDER = '../'
+DIST_FUNC_POS = 'euclid_align_pos'
+DIST_FUNC_NEG = 'euclid_align_neg'
+FOLDER = ''
 TRACE_FNAMES = [FOLDER + fname for fname in ['merged_train_pos', 'merged_train_neg', 'merged_test_pos', 'merged_test_neg']]
 SHAPELET_FNAME = FOLDER + 'shapelets'
 
@@ -41,7 +42,7 @@ def get_parameter_list(filenames_pos, filenames_neg, shapelets_pos, shapelets_ne
             X_pos,
             y,
             shapelets_pos[i],
-            DIST_FUNC
+            DIST_FUNC_POS
         ]
         parameter_list.append(parameter_set)
     
@@ -51,7 +52,7 @@ def get_parameter_list(filenames_pos, filenames_neg, shapelets_pos, shapelets_ne
             X_neg,
             y,
             shapelets_neg[i],
-            DIST_FUNC
+            DIST_FUNC_NEG
         ]
         parameter_list.append(parameter_set)
     
@@ -73,13 +74,13 @@ def load_data():
 
     return tuple(traces) + shapelets
 
-def chunk_traces(X_pos, X_neg, y, num_chunks):
+def chunk_traces(X_pos, X_neg, y, num_chunks, set_type):
     param_list = []
     k, m = divmod(len(X_pos), num_chunks)
     print("Approx Chunk Length: " + str(k))
     for i in range(num_chunks):
         idx = slice(i*k+min(i,m), (i+1)*k+min(i+1,m))
-        fnames_pos, fnames_neg = generate_names(set_type="train", tabs='3', index = idx.start)
+        fnames_pos, fnames_neg = generate_names(set_type=set_type, tabs='3', index = idx.start)
         
         chunk_pos = X_pos[idx]
         chunk_neg = X_neg[idx]
@@ -95,9 +96,11 @@ def chunk_traces(X_pos, X_neg, y, num_chunks):
 
     return param_list
 
+def convert_for_stumpy(x_list):
+    return [x.astype(np.float64) for x in x_list]
 
 if __name__ == "__main__":
-
+    #make_results_folder()
     train_pos, train_neg, test_pos, test_neg, shapelets_pos, shapelets_neg = load_data()
 
     X_train_pos, _ = traces_to_xy(train_pos)
@@ -106,6 +109,18 @@ if __name__ == "__main__":
     X_test_pos, _ = traces_to_xy(test_pos)
     X_test_neg, y_test = traces_to_xy(test_neg)
 
+    for i in range(len(shapelets_pos)):
+        shapelets_pos[i] = convert_for_stumpy(shapelets_pos[i])
+        shapelets_neg[i] = convert_for_stumpy(shapelets_neg[i])
+
+    X_train_pos = convert_for_stumpy(X_train_pos)
+    X_train_neg = convert_for_stumpy(X_train_neg)
+
+    X_test_pos = convert_for_stumpy(X_test_pos)
+    X_test_neg = convert_for_stumpy(X_test_neg)
+
+    print(X_train_pos[0].dtype)
+
     param_list = []
 
     num_cpus = multiprocessing.cpu_count()
@@ -113,7 +128,7 @@ if __name__ == "__main__":
     print("CPUs Available: " + str(num_cpus))
     print("Chunks: " + str(num_chunks))
 
-    param_list = chunk_traces(X_train_pos, X_train_neg, y_train, num_chunks) + chunk_traces(X_test_pos, X_test_neg, y_test, num_chunks)
+    param_list = chunk_traces(X_train_pos, X_train_neg, y_train, num_chunks, 'train') + chunk_traces(X_test_pos, X_test_neg, y_test, num_chunks, 'test')
     print("Tasks to Complete: " + str(len(param_list)))
 
     with Pool(num_cpus) as p:
