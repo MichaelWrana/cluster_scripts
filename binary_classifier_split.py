@@ -10,7 +10,7 @@ import multiprocessing
 
 DIST_FUNC_POS = 'euclid_align_pos'
 DIST_FUNC_NEG = 'euclid_align_neg'
-FOLDER = ''
+FOLDER = '../'
 TRACE_FNAMES = [FOLDER + fname for fname in ['merged_train_pos', 'merged_train_neg', 'merged_test_pos', 'merged_test_neg']]
 SHAPELET_FNAME = FOLDER + 'shapelets'
 
